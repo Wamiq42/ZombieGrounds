@@ -21,16 +21,21 @@ public class PlayerBehaviourManager
     private InventoryManager playerInventory;
     private List<GameObject> guns;
     private Transform cameraTransform;
+    private Weapon equipedWeapon;
+    private bool isGunEquipped = false;
+    
+    private int remainingBullets;
+   
 
     public PlayerBehaviourManager()
     {
+       
         playerInventory = new InventoryManager();
         playerPhysics = new PlayerPhysics();
 
 
     }
 
-    
 
     public void SetCameraTransform(Transform cameraTransform)
     {
@@ -75,6 +80,9 @@ public class PlayerBehaviourManager
     }
 
 
+
+
+
     /*Camera Movement method
       * Gets the input Mouse that is movement of mouse along the axis,
       * mouse X for the horizontal and Mouse y for the vertical movement,
@@ -100,6 +108,11 @@ public class PlayerBehaviourManager
         bodyTransform.localRotation = Quaternion.Euler(rotationXaxis, 0, 0);
     }
 
+
+
+
+
+
     /*PlayerMovement
      * Basic player Movement using old unity input system.
      * using characterController move method to move in the given direction 
@@ -113,27 +126,55 @@ public class PlayerBehaviourManager
 
 
       //moveDirection = Vector3.right * horizontalInput + Vector3.forward * verticalInput;
-        moveDirection = (playerTransform.right * horizontalInput + playerTransform.forward * verticalInput).normalized;
+        moveDirection = (playerTransform.right * horizontalInput 
+            + playerTransform.forward * verticalInput).normalized;
 
         playerCharacterController.Move(moveDirection * speed * Time.deltaTime);
     }
+    
+    
+    
+    
     public void PlayerGravity()
     {
         playerCharacterController.Move(playerPhysics.Gravity() * Time.deltaTime);
     }
+
+
+    public void FireGun()
+    {
+        if (isGunEquipped)
+        {
+            equipedWeapon.Fire();
+        }
+        else
+        {
+            equipedWeapon.Melee();
+        }
+        
+        
+    }
+
+
+
+
+
     public void EquipGun()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             playerInventory.SetEquippedGun(EquippedGun.AssaultRifle);
+            isGunEquipped = true;
         }
         if(Input.GetKeyDown(KeyCode.Alpha2))
         {
             playerInventory.SetEquippedGun(EquippedGun.pistol);
+            isGunEquipped = true;
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             playerInventory.SetEquippedGun(EquippedGun.hands);
+            isGunEquipped = false;
         }
     }
 
@@ -144,9 +185,14 @@ public class PlayerBehaviourManager
             if ((int)equippedGun == i)
             {
                 guns[i].SetActive(true);
+                equipedWeapon = guns[i].GetComponent<Weapon>();
                 guns[i].transform.rotation = bodyTransform.rotation;
                 SetBodyTransform(guns[i].transform);
                 cameraTransform.SetParent(guns[i].transform);
+                equipedWeapon.WeaponAttributes();
+               
+
+
             }
             else
             {

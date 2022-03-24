@@ -28,15 +28,15 @@ public class PlayerPhysics
         if (onGround)
         {
             velocity.y = 0f;
-            Debug.Log(velocity);
-            Debug.Log("if Condition");
+            //Debug.Log(velocity);
+            //Debug.Log("if Condition");
             return velocity;
         }
         else
         {
             // v = 1/2 gt^2
-            Debug.Log(velocity);
-            Debug.Log("else Condition");
+            //Debug.Log(velocity);
+            //Debug.Log("else Condition");
             velocity.y += (gravity * Time.deltaTime);
             return velocity;
         }

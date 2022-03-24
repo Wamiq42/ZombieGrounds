@@ -6,22 +6,25 @@ public class PlayerController : MonoBehaviour
 {
     private PlayerBehaviourManager playerManager;
 
-
+    
     public CharacterController playerCharController;
+
     public Transform cameraTransform;
     public Transform playerTransform;
     public Transform bodyTransform;
     public Transform groundCheckTransform;
     public LayerMask groundLayerMask;
     public List<GameObject> guns;
+   
 
 
     // Start is called before the first frame update
     void Awake()
     {
-
+        
         
         playerManager = new PlayerBehaviourManager();
+      
         playerManager.SetGroundCheckTransform(groundCheckTransform);
         playerManager.SetGroundLayerMask(groundLayerMask);
         playerManager.SetPlayerTransform(playerTransform);
@@ -41,7 +44,7 @@ public class PlayerController : MonoBehaviour
         playerManager.MouseMovement();
         playerManager.PlayerMovement();
         playerManager.EquipGun();
-
+        playerManager.FireGun();
        
 
     }
@@ -50,7 +53,7 @@ public class PlayerController : MonoBehaviour
         playerManager.PlayerGravity();
     }
 
-
+    
 
 
 
