@@ -53,9 +53,9 @@ public class PlayerController : MonoBehaviour
         playerManager.PlayerGravity();
     }
 
+
+
     
-
-
 
 
 
