@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,38 +16,51 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheckTransform;
     public LayerMask groundLayerMask;
     public List<GameObject> guns;
-   
+    public GameManager gameManager;
+    private PhotonView PV;
 
 
     // Start is called before the first frame update
     void Awake()
     {
-        
-        
+
+        PV = GetComponent<PhotonView>();
         playerManager = new PlayerBehaviourManager();
-      
         playerManager.SetGroundCheckTransform(groundCheckTransform);
         playerManager.SetGroundLayerMask(groundLayerMask);
         playerManager.SetPlayerTransform(playerTransform);
         playerManager.SetBodyTransform(bodyTransform);
         playerManager.SetCharacterController(playerCharController);
         playerManager.SetCameraTransform(cameraTransform);
-        playerManager.SetGuns(guns);
+        playerManager.SetGuns(guns);   
         playerManager.CursorLock();
         playerManager.NoGun();
+        playerCharController.detectCollisions = true;
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        playerManager.SetGameManager(gameManager);
 
-        
     }
 
     // Update is called once per frame
     void Update()
     {
-        playerManager.MouseMovement();
-        playerManager.PlayerMovement();
-        playerManager.EquipGun();
-        playerManager.FireGun();
-       
+        if (playerManager.GetHealth() > 0 && PV.IsMine)
+        {
+            playerManager.MouseMovement();
+            playerManager.PlayerMovement();
+            playerManager.EquipGun();
+            playerManager.FireGun();
+        }
+        else if(playerManager.GetHealth() < 0 && PV.IsMine)
+        {
+            gameManager.SetPlayerDead(true);
+            Destroy(gameObject);
+            
+        }
 
+        gameManager.healthText.text = "Health : " + playerManager.GetHealth();
+        gameManager.ammoText.text = "Ammo : " + playerManager.GetAmmo();
+     
     }
     void FixedUpdate()
     {
@@ -54,7 +68,10 @@ public class PlayerController : MonoBehaviour
     }
 
 
-
+    public PlayerBehaviourManager GetPlayerManager()
+    {
+        return playerManager;
+    }
     
 
 

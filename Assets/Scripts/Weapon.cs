@@ -11,7 +11,10 @@ public class Weapon : MonoBehaviour
     protected float fireRate;
     protected Transform bulletSpawnLocation;
     protected Animator animator;
-    GameObject temp = null;
+    protected GameManager gameManager;
+    protected AudioSource audioSourceFire;
+    protected AudioSource audioSourceReload;
+    GameObject tempPistolBullet = null;
     public virtual void WeaponAttributes()
     {
         magSize = 0;
@@ -31,26 +34,38 @@ public class Weapon : MonoBehaviour
 
         if (Input.GetButtonDown("Fire1") && bullets > 0)
         {
-            if(temp == null)
+            if(tempPistolBullet == null)
             {
                 animator.SetTrigger("Fire");
-                temp = Instantiate(bullet,
+                audioSourceFire.Play();
+                tempPistolBullet = Instantiate(bullet,
                 bulletSpawnLocation.position, bulletSpawnLocation.rotation);
                 Debug.Log(bullets);
                 bullets--;
-                Destroy(temp, bulletDestroyTimer);
+                Destroy(tempPistolBullet, bulletDestroyTimer);
             }
         }
         else if(Input.GetButtonDown("Fire1") && bullets<=0)
         {
+            gameManager.SetReload(true);
             Debug.Log("R to Reload");
         }
 
         if (Input.GetKeyDown(KeyCode.R))
         {
             Reload();
+            animator.SetTrigger("Reload");
+            audioSourceReload.Play();
+            gameManager.SetReload(false);
         }
     }
+
+    public void SetGameManager(GameManager gameManager)
+    {
+        this.gameManager = gameManager;
+    }
+
+
     public void Reload()
     {
         bullets = magSize-1;

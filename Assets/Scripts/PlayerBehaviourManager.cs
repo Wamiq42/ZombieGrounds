@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerBehaviourManager
 {
+    private int health = 100;
+
     private float mouseX;
     private float mouseY;
     private float horizontalInput;
@@ -22,8 +24,8 @@ public class PlayerBehaviourManager
     private List<GameObject> guns;
     private Transform cameraTransform;
     private Weapon equipedWeapon;
+    private GameManager gameManager;
     private bool isGunEquipped = false;
-    
     private int remainingBullets;
    
 
@@ -32,10 +34,12 @@ public class PlayerBehaviourManager
        
         playerInventory = new InventoryManager();
         playerPhysics = new PlayerPhysics();
-
-
     }
 
+    public void SetGameManager(GameManager gameManager)
+    {
+        this.gameManager = gameManager;
+    }
 
     public void SetCameraTransform(Transform cameraTransform)
     {
@@ -70,6 +74,10 @@ public class PlayerBehaviourManager
         this.guns = guns;
     }
 
+    public int GetHealth()
+    {
+        return health;
+    }
 
 
 
@@ -108,7 +116,7 @@ public class PlayerBehaviourManager
         bodyTransform.localRotation = Quaternion.Euler(rotationXaxis, 0, 0);
     }
 
-
+    
 
 
 
@@ -133,6 +141,18 @@ public class PlayerBehaviourManager
     }
     
     
+    public void GetDamage(int damage)
+    {
+        health -= damage;
+    }
+
+    public int GetAmmo()
+    {
+        return equipedWeapon.GetBullets();
+    }
+
+
+
     
     
     public void PlayerGravity()
@@ -186,13 +206,11 @@ public class PlayerBehaviourManager
             {
                 guns[i].SetActive(true);
                 equipedWeapon = guns[i].GetComponent<Weapon>();
+                equipedWeapon.SetGameManager(gameManager);
                 guns[i].transform.rotation = bodyTransform.rotation;
                 SetBodyTransform(guns[i].transform);
                 cameraTransform.SetParent(guns[i].transform);
                 equipedWeapon.WeaponAttributes();
-               
-
-
             }
             else
             {

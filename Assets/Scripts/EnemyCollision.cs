@@ -12,23 +12,25 @@ public class EnemyCollision : MonoBehaviour
     }
 
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         Bullet bulletScript = other.GetComponent<Bullet>();
         Debug.Log("triggered");
-        if(bulletScript!=null)
+        if (bulletScript != null)
         {
             Debug.Log("triggerd with Bullets");
             enemyController.GetDamage(bulletScript.damage);
+            Destroy(other);
         }
     }
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionExit(Collision collision)
     {
-        Hand handScript = collision.gameObject.GetComponent<Hand>();
+        DamageHit damageHitScript = collision.gameObject.GetComponent<DamageHit>();
         Debug.Log("Collided");
+        if(damageHitScript != null)
         {
             Debug.Log("HandCollided");
-            enemyController.GetDamage(20);
+            enemyController.GetDamage(damageHitScript.GetDamage());
         }
     }
 
